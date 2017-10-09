@@ -331,12 +331,24 @@ namespace VRTK
         /// <param name="vectorA">The Vector2 to compare against.</param>
         /// <param name="vectorB">The Vector2 to compare with</param>
         /// <param name="compareFidelity">The number of decimal places to use when doing the comparison on the float elements within the Vector2.</param>
-        /// <returns>Returns true if the given Vector2 objects match based on the given fidelity.</returns>
+        /// <returns>Returns `true` if the given Vector2 objects match based on the given fidelity.</returns>
         public static bool Vector2ShallowCompare(Vector2 vectorA, Vector2 vectorB, int compareFidelity)
         {
             Vector2 distanceVector = vectorA - vectorB;
             return (Math.Round(Mathf.Abs(distanceVector.x), compareFidelity, MidpointRounding.AwayFromZero) < float.Epsilon &&
                     Math.Round(Mathf.Abs(distanceVector.y), compareFidelity, MidpointRounding.AwayFromZero) < float.Epsilon);
+        }
+
+        /// <summary>
+        /// The Vector3ShallowCompare method compares two given Vector3 objects based on the given threshold, which is the equavelent of checking the distance between two Vector3 objects are above the threshold distance.
+        /// </summary>
+        /// <param name="vectorA">The Vector3 to compare against.</param>
+        /// <param name="vectorB">The Vector3 to compare with</param>
+        /// <param name="threshold">The distance in which the two Vector3 objects can be within to be considered true</param>
+        /// <returns>Returns `true` if the given Vector3 objects are within the given threshold distance.</returns>
+        public static bool Vector3ShallowCompare(Vector3 vectorA, Vector3 vectorB, float threshold)
+        {
+            return (Vector3.Distance(vectorA, vectorB) < threshold);
         }
 
         /// <summary>
