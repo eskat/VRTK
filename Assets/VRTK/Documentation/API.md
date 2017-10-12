@@ -6216,6 +6216,7 @@ A collection of scripts that provide physics based controls that mimiic real lif
 
  * [Base Physics Controllable](#base-physics-controllable-vrtk_basephysicscontrollable)
  * [Physics Button](#physics-button-vrtk_physicsbutton)
+ * [Physics Door](#physics-door-vrtk_physicsdoor)
 
 ---
 
@@ -6284,6 +6285,73 @@ The GetValue method returns the current position value of the button.
    * `float` - The normalized position of the button.
 
 The GetNormalizedValue method returns the current position value of the button normalized between `0f` and `1f`.
+
+---
+
+## Physics Door (VRTK_PhysicsDoor)
+ > extends [VRTK_BasePhysicsControllable](#base-physics-controllable-vrtk_basephysicscontrollable)
+
+### Overview
+
+A physics based openable door.
+
+**Required Components:**
+ * `Collider` - A Unity Collider to determine when an interaction has occured. Can be a compound collider set in child GameObjects. Will be automatically added at runtime.
+ * `Rigidbody` - A Unity Rigidbody to allow the GameObject to be affected by the Unity Physics System. Will be automatically added at runtime.
+
+**Optional Components:**
+ * `VRTK_ControllerRigidbodyActivator` - A Controller Rigidbody Activator to automatically enable the controller rigidbody when near the door. Will be automatically created if the `Auto Interaction` paramter is checked.
+
+**Script Usage:**
+ * Place the `VRTK_PhysicsDoor` script onto the GameObject that is to become the door.
+ * Create a nested GameObject under the door GameObject and position it where the hinge should operate.
+ * Apply the nested hinge GameObject to the `Hinge Point` parameter on the Physics Door script.
+
+### Inspector Parameters
+
+ * **Handle:** The GameObject that represents the handle of the door.
+ * **Grab Handle Only:** If this is checked then only grabbing the specified handle will operate the door.
+ * **Hinge Point:** A Transform that denotes the position where the door hinge will be created.
+ * **Minimum Angle:** The minimum angle the door can swing to, will be translated into a negative angle.
+ * **Maximum Angle:** The maximum angle the door can swing to, will be considered a positive angle.
+ * **Min Max Threshold Angle:** The angle at which the door rotation can be within the minimum or maximum angle before the minimum or maximum angles are considered reached.
+ * **Resting Angle:** The angle at which will be considered as the resting position of the door.
+ * **Force Shut Threshold Angle:** The threshold angle from the `Resting Angle` that the current angle of the door needs to be within to snap the door back to the `Resting Angle`
+ * **Is Locked:** If this is checked then the door will not be able to be moved.
+ * **Grab Mechanic:** The type of Interactable Object grab mechanic to use when operating the door.
+ * **Use Friction Overrides:** If this is checked then the `Grabbed Friction` value will be used as the Rigidbody drag value when the door is grabbed and the `Released Friction` value will be used as the Rigidbody drag value when the door is released.
+ * **Grabbed Friction:** The Rigidbody drag value when the door is grabbed.
+ * **Released Friction:** The Rigidbody drag value when the door is released.
+
+### Class Variables
+
+ * `public enum GrabMechanic` - Type of Grab Mechanic
+   * `TrackObject` - The Track Object Grab Mechanic
+   * `RotatorTrack` - The Rotator Track Grab Mechanic
+
+### Class Methods
+
+#### GetValue/0
+
+  > `public override float GetValue()`
+
+ * Parameters
+   * _none_
+ * Returns
+   * `float` - The actual rotation of the door.
+
+The GetValue method returns the current rotation value of the door.
+
+#### GetNormalizedValue/0
+
+  > `public override float GetNormalizedValue()`
+
+ * Parameters
+   * _none_
+ * Returns
+   * `float` - The normalized rotation of the door.
+
+The GetNormalizedValue method returns the current rotation value of the door normalized between `0f` and `1f`.
 
 ---
 
@@ -7281,8 +7349,6 @@ A number of controls are available which partially support auto-configuration. S
 All 3D controls extend the `VRTK_Control` abstract class which provides common methods and events.
 
  * [Control](#control-vrtk_control)
- * [Chest](#chest-vrtk_chest)
- * [Door](#door-vrtk_door)
  * [Drawer](#drawer-vrtk_drawer)
  * [Knob](#knob-vrtk_knob)
  * [Wheel](#wheel-vrtk_wheel)
@@ -7372,64 +7438,6 @@ The SetContent method sets the given game object as the content of the control. 
    * `GameObject` - The currently stored content for the control.
 
 The GetContent method returns the current game object of the control's content.
-
----
-
-## Chest (VRTK_Chest)
- > extends [VRTK_Control](#control-vrtk_control)
-
-### Overview
-
-Transforms a game object into a chest with a lid. The direction can be auto-detected with very high reliability or set manually.
-
-The script will instantiate the required Rigidbody, Interactable and HingeJoint components automatically in case they do not exist yet. It will expect three distinct game objects: a body, a lid and a handle. These should be independent and not children of each other.
-
-### Inspector Parameters
-
- * **Direction:** The axis on which the chest should open. All other axis will be frozen.
- * **Lid:** The game object for the lid.
- * **Body:** The game object for the body.
- * **Handle:** The game object for the handle.
- * **Content:** The parent game object for the chest content elements.
- * **Hide Content:** Makes the content invisible while the chest is closed.
- * **Max Angle:** The maximum opening angle of the chest.
-
-### Example
-
-`VRTK/Examples/025_Controls_Overview` shows a chest that can be open and closed, it also displays the current opening angle of the chest.
-
----
-
-## Door (VRTK_Door)
- > extends [VRTK_Control](#control-vrtk_control)
-
-### Overview
-
-Transforms a game object into a door with an optional handle attached to an optional frame. The direction can be freely set and also very reliably auto-detected.
-
-There are situations when it can be very hard to automatically calculate the correct axis and anchor values for the hinge joint. If this situation is encountered then simply add the hinge joint manually and set these two values. All the rest will still be handled by the script.
-
-The script will instantiate the required Rigidbodies, Interactable and HingeJoint components automatically in case they do not exist yet. Gizmos will indicate the direction.
-
-### Inspector Parameters
-
- * **Direction:** The axis on which the door should open.
- * **Door:** The game object for the door. Can also be an empty parent or left empty if the script is put onto the actual door mesh. If no colliders exist yet a collider will tried to be automatically attached to all children that expose renderers.
- * **Handles:** The game object for the handles. Can also be an empty parent or left empty. If empty the door can only be moved using the rigidbody mode of the controller. If no collider exists yet a compound collider made up of all children will try to be calculated but this will fail if the door is rotated. In that case a manual collider will need to be assigned.
- * **Frame:** The game object for the frame to which the door is attached. Should only be set if the frame will move as well to ensure that the door moves along with the frame.
- * **Content:** The parent game object for the door content elements.
- * **Hide Content:** Makes the content invisible while the door is closed.
- * **Max Angle:** The maximum opening angle of the door.
- * **Open Inward:** Can the door be pulled to open.
- * **Open Outward:** Can the door be pushed to open.
- * **Min Snap Close:** The range at which the door must be to being closed before it snaps shut. Only works if either inward or outward is selected, not both.
- * **Released Friction:** The amount of friction the door will have whilst swinging when it is not grabbed.
- * **Grabbed Friction:** The amount of friction the door will have whilst swinging when it is grabbed.
- * **Handle Interactable Only:** If this is checked then only the door handle is grabbale to operate the door.
-
-### Example
-
-`VRTK/Examples/025_Controls_Overview` shows a selection of door types, from a normal door and trapdoor, to a door with a cat-flap in the middle.
 
 ---
 
@@ -8312,6 +8320,18 @@ The AddCameraFade method finds the headset camera and adds a headset fade script
    * _none_
 
 The CreateColliders method attempts to add box colliders to all child objects in the given object that have a renderer but no collider.
+
+#### ColliderExclude/2
+
+  > `public static Collider[] ColliderExclude(Collider[] setA, Collider[] setB)`
+
+ * Parameters
+   * `Collider[] setA` - The array that contains all of the relevant colliders.
+   * `Collider[] setB` - The array that contains the colliders to remove from setA.
+ * Returns
+   * `Collider[]` - A Collider array that is a subset of setA that doesn't contain the colliders from setB.
+
+The ColliderExclude method reduces the colliders in the setA array by those matched in the setB array.
 
 #### CloneComponent/3
 

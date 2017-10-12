@@ -88,9 +88,10 @@ namespace VRTK.Controllables
         protected bool atMaxLimit;
         protected Collider interactingCollider;
         protected VRTK_InteractTouch interactingTouchScript;
-        protected Collider[] controlColliders;
+        protected Collider[] controlColliders = new Collider[0];
         protected bool createCustomCollider;
         protected Coroutine disableColliderRoutine;
+        protected Collider[] excludeColliders = new Collider[0];
 
         public virtual void OnValueChanged(ControllableEventArgs e)
         {
@@ -177,6 +178,7 @@ namespace VRTK.Controllables
                     Destroy(controlColliders[i]);
                 }
             }
+            excludeColliders = new Collider[0];
         }
 
         protected virtual void OnDrawGizmosSelected()
@@ -218,7 +220,7 @@ namespace VRTK.Controllables
 
         protected virtual void SetupCollider()
         {
-            controlColliders = GetComponentsInChildren<Collider>();
+            controlColliders = VRTK_SharedMethods.ColliderExclude(GetComponentsInChildren<Collider>(), excludeColliders);
             createCustomCollider = false;
             if (controlColliders.Length == 0)
             {

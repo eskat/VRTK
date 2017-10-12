@@ -136,6 +136,19 @@ namespace VRTK
         }
 
         /// <summary>
+        /// The ColliderExclude method reduces the colliders in the setA array by those matched in the setB array.
+        /// </summary>
+        /// <param name="setA">The array that contains all of the relevant colliders.</param>
+        /// <param name="setB">The array that contains the colliders to remove from setA.</param>
+        /// <returns>A Collider array that is a subset of setA that doesn't contain the colliders from setB.</returns>
+        public static Collider[] ColliderExclude(Collider[] setA, Collider[] setB)
+        {
+            List<Collider> setAList = new List<Collider>(setA);
+            List<Collider> setBList = new List<Collider>(setB);
+            return setA.Except(setB).ToArray<Collider>();
+        }
+
+        /// <summary>
         /// The CloneComponent method takes a source component and copies it to the given destination game object.
         /// </summary>
         /// <param name="source">The component to copy.</param>
